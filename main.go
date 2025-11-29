@@ -7,48 +7,79 @@ const usd_rub float64 = 81.25
 
 func main() {
 	val, first_val, second_val := valut()
-	converter(val, first_val, second_val)
+	res := convent(val, first_val, second_val)
+	fmt.Printf("Итоговая сумма: %.1f", res)
 }
 func valut() (float64, string, string) {
-	var val float64
-	var first_val, secind_val string
-	fmt.Printf("Введите сумму для перевода: \n")
-	fmt.Scan(&val)
-	fmt.Printf("Введите из какой валюты и в какую совершить перевод (EUR, RUB, USD): \n")
-	fmt.Scan(&first_val, &secind_val)
-	return val, first_val, secind_val
+	for {
+		var val float64
+		var first_val, second_val string
+		fmt.Print("Введите исходную валюту RUB/USD/EUR: ")
+		fmt.Scan(&first_val)
+		if first_val != "RUB" && first_val != "USD" && first_val != "EUR" {
+			fmt.Println("Неправильно введена валюта, попробуйте снова")
+			continue
+		}
+		fmt.Print("Введите число: ")
+		fmt.Scan(&val)
+		if val <= 0 {
+			fmt.Println("Число должно быть положительным, попробуйте снова")
+			continue
+		}
+		switch first_val {
+		case "RUB":
+			fmt.Print("Введите целевую валюту USD/EUR: ")
+		case "USD":
+			fmt.Print("Введите целевую валюту RUB/EUR: ")
+		case "EUR":
+			fmt.Print("Введите целевую валюту RUB/USD: ")
+		}
+		fmt.Scan(&second_val)
+		switch first_val {
+		case "RUB":
+			if second_val != "USD" && second_val != "EUR" {
+				fmt.Println("Неправильно введена валюта, попробуйте снова")
+				continue
+			}
+		case "USD":
+			if second_val != "RUB" && second_val != "EUR" {
+				fmt.Println("Неправильно введена валюта, попробуйте снова")
+				continue
+			}
+		case "EUR":
+			if second_val != "RUB" && second_val != "USD" {
+				fmt.Println("Неправильно введена валюта, попробуйте снова")
+				continue
+			}
+		}
+		return val, first_val, second_val
+	}
 }
 
-func converter(val float64, first_val, second_val string) {
-
-	if first_val == "EUR" {
-		if second_val == "USD" {
-			res := val / usd_eur
-			fmt.Printf("Итоговая сумма: %.1f", res)
+func convent(val float64, first_val, second_val string) float64 {
+	var res float64
+	switch {
+	case first_val == "RUB":
+		switch {
+		case second_val == "EUR":
+			res = (val / usd_rub) * usd_eur
+		case second_val == "USD":
+			res = val / usd_rub
 		}
-		if second_val == "RUB" {
-			res := (val / usd_eur) * usd_rub
-			fmt.Printf("Итоговая сумма: %.1f", res)
+	case first_val == "EUR":
+		switch {
+		case second_val == "RUB":
+			res = (val / usd_eur) * usd_rub
+		case second_val == "USD":
+			res = val / usd_eur
 		}
-	}
-	if first_val == "USD" {
-		if second_val == "EUR" {
-			res := val * usd_eur
-			fmt.Printf("Итоговая сумма: %.1f", res)
-		}
-		if second_val == "RUB" {
-			res := val * usd_rub
-			fmt.Printf("Итоговая сумма: %.1f", res)
-		}
-	}
-	if first_val == "RUB" {
-		if second_val == "EUR" {
-			res := (val / usd_rub) * usd_eur
-			fmt.Printf("Итоговая сумма: %.1f", res)
-		}
-		if second_val == "USD" {
-			res := val / usd_rub
-			fmt.Printf("Итоговая сумма: %.1f", res)
+	case first_val == "USD":
+		switch {
+		case second_val == "RUB":
+			res = val * usd_rub
+		case second_val == "EUR":
+			res = val * usd_eur
 		}
 	}
+	return res
 }
