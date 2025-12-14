@@ -5,6 +5,8 @@ import "fmt"
 const usd_eur float64 = 0.87
 const usd_rub float64 = 81.25
 
+type MapSF64 = map[string]float64
+
 func main() {
 	val, first_val, second_val := valut()
 	res := convent(val, first_val, second_val)
@@ -57,29 +59,26 @@ func valut() (float64, string, string) {
 }
 
 func convent(val float64, first_val, second_val string) float64 {
-	var res float64
-	switch {
-	case first_val == "RUB":
-		switch {
-		case second_val == "EUR":
-			res = (val / usd_rub) * usd_eur
-		case second_val == "USD":
-			res = val / usd_rub
-		}
-	case first_val == "EUR":
-		switch {
-		case second_val == "RUB":
-			res = (val / usd_eur) * usd_rub
-		case second_val == "USD":
-			res = val / usd_eur
-		}
-	case first_val == "USD":
-		switch {
-		case second_val == "RUB":
-			res = val * usd_rub
-		case second_val == "EUR":
-			res = val * usd_eur
-		}
+	valutRUB := MapSF64{
+		"USD": val / usd_rub,
+		"EUR": (val / usd_rub) * usd_eur,
 	}
-	return res
+	valutUSD := MapSF64{
+		"RUB": val * usd_rub,
+		"EUR": val * usd_eur,
+	}
+	valutEUR := MapSF64{
+		"RUB": (val / usd_eur) * usd_rub,
+		"USD": val / usd_eur,
+	}
+	switch first_val {
+	case "RUB":
+		return valutRUB[second_val]
+	case "USD":
+		return valutUSD[second_val]
+	case "EUR":
+		return valutEUR[second_val]
+	default:
+		return 0.0
+	}
 }
