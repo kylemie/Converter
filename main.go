@@ -9,21 +9,24 @@ type MapSF64 = map[string]float64
 
 func main() {
 	val, first_val, second_val := valut()
-	valut := map[string]*MapSF64{
-		"RUB": &MapSF64{
-			"USD": val / usd_rub,
-			"EUR": (val / usd_rub) * usd_eur,
-		},
-		"USD": &MapSF64{
-			"RUB": val * usd_rub,
-			"EUR": val * usd_eur,
-		},
-		"EUR": &MapSF64{
-			"RUB": (val / usd_eur) * usd_rub,
-			"USD": val / usd_eur,
-		},
+	rubMap := MapSF64{
+		"USD": val / usd_rub,
+		"EUR": (val / usd_rub) * usd_eur,
 	}
-	res := convent(&valut, first_val, second_val)
+	usdMap := MapSF64{
+		"RUB": val * usd_rub,
+		"EUR": val * usd_eur,
+	}
+	eurMap := MapSF64{
+		"RUB": (val / usd_eur) * usd_rub,
+		"USD": val / usd_eur,
+	}
+	valut := map[string]*MapSF64{
+		"RUB": &rubMap,
+		"USD": &usdMap,
+		"EUR": &eurMap,
+	}
+	res := convent(valut, first_val, second_val)
 	fmt.Printf("Итоговая сумма: %.1f", res)
 }
 func valut() (float64, string, string) {
@@ -72,6 +75,6 @@ func valut() (float64, string, string) {
 	}
 }
 
-func convent(valut *map[string]*MapSF64, first_val, second_val string) float64 {
-	return (*(*valut)[first_val])[second_val]
+func convent(valut map[string]*MapSF64, first_val, second_val string) float64 {
+	return (*valut[first_val])[second_val]
 }
