@@ -9,16 +9,16 @@ type MapSF64 = map[string]float64
 
 func main() {
 	val, first_val, second_val := valut()
-	valut := map[string]MapSF64{
-		"RUB": {
+	valut := map[string]*MapSF64{
+		"RUB": &MapSF64{
 			"USD": val / usd_rub,
 			"EUR": (val / usd_rub) * usd_eur,
 		},
-		"USD": {
+		"USD": &MapSF64{
 			"RUB": val * usd_rub,
 			"EUR": val * usd_eur,
 		},
-		"EUR": {
+		"EUR": &MapSF64{
 			"RUB": (val / usd_eur) * usd_rub,
 			"USD": val / usd_eur,
 		},
@@ -72,6 +72,6 @@ func valut() (float64, string, string) {
 	}
 }
 
-func convent(valut *map[string]MapSF64, first_val, second_val string) float64 {
-	return (*valut)[first_val][second_val]
+func convent(valut *map[string]*MapSF64, first_val, second_val string) float64 {
+	return (*(*valut)[first_val])[second_val]
 }
